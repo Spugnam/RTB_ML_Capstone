@@ -9,7 +9,7 @@
 library('data.table')
 library('feather')
 
-folder = "../data/split_by_day"
+folder = "../data/split_by_day3"
 
 file_list <- list.files(path = folder,
                         all.files = FALSE, recursive = FALSE,
@@ -18,9 +18,9 @@ file_list <- list.files(path = folder,
                         ignore.case = FALSE, include.dirs = FALSE, no.. = FALSE)
 
 # Check file sizes
-# info <- file.info(file_list)
-# info$size_mb <- info$size/(1024 * 1024) 
-# print(subset(info, select=c("size_mb")))
+info <- file.info(file_list)
+info$size_mb <- info$size/(1024 * 1024)
+print(subset(info, select=c("size_mb")))
 
 impressions = fread(file_list[1], header=F, stringsAsFactors = T)
 row.num <- dim(impressions)[1]
@@ -36,7 +36,7 @@ dim(impressions)
 
 # Manually write column names
 colnames(impressions) <- c('adSize', 'adType', 'bestVenueName', 'deviceName', 'deviceType',
-                           'gender', 'landingPage', 'os', 'region', 'venueType', 'timestamp_hour', 'timestamp_weekday',
+                           'gender', 'landingPage', 'os', 'region', 'timestamp_hour', 'timestamp_weekday',
                            'ad', 'campaign', 'day', 'clicked', 'TrainTestFlag', 'IAB1', 'IAB2', 'IAB3', 'IAB4',
                            'IAB5', 'IAB6', 'IAB7', 'IAB8', 'IAB9', 'IAB10', 'IAB11',
                            'IAB12', 'IAB13', 'IAB14', 'IAB15', 'IAB16', 'IAB17', 'IAB18',
@@ -55,6 +55,17 @@ save.folder = "../data/split_by_day/concat/impressions.feather"
 
 # feather library
 write_feather(impressions, save.folder)
+
+# write csv files
+impressions[, day := as.factor(day)]
+setkey(impressions, day)
+train = impressions[as.character(1:9)]
+test = impressions[as.character(10:11)]
+dim(train)[1]+dim(test)[1] == dim(impressions)[1] # TRUE
+write.csv(train, "../data/split_by_day2/train.csv")
+write.csv(test, "../data/split_by_day2/test.csv")
+# write.csv(impressions[1:80, ], file = "mini_train.csv")
+# write.csv(impressions[81:100, ], file = "mini_test.csv")
 
 # Free up memory
 rm(impressions)

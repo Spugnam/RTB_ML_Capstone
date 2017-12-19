@@ -37,13 +37,13 @@ class(impressions) # still a data.frame
 ####################
 # Train-Test Split
 ####################
-impressions[, day := as.factor(day)]
 View(head(impressions))
 
 levels(impressions$day)
 
 impressions[, .(Count = .N), by = TrainTestFlag] # conflict data.table/ tbl_df
 
+impressions[, day := as.factor(day)]
 setkey(impressions, day)
 train = impressions[as.character(1:15)]
 test = impressions[as.character(16:22)] # test ~ 20%  TODO: do not subsample test

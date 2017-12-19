@@ -1,9 +1,9 @@
 from datetime import datetime
 from csv import DictReader
 from math import exp, log, sqrt
-import mmh3
-import pandas as pd
-from sklearn.feature_selection import mutual_info_classif
+# import mmh3 # commenting to run with pypy
+# import pandas as pd
+# from sklearn.feature_selection import mutual_info_classif
 
 # parameters #################################################################
 
@@ -11,8 +11,8 @@ train = '../data/mini_train.csv'  # path to training file
 test = '../data/mini_test.csv'  # path to testing file
 
 # create test panda df
-test_df = pd.read_csv(test)
-test_df = test_df.drop(test_df.columns[0], axis=1)
+# test_df = pd.read_csv(test)
+# test_df = test_df.drop(test_df.columns[0], axis=1)
 
 D = 2 ** 20   # number of weights use for learning
 alpha = .1    # learning rate for stochastic gradient descent (sgd) optimization
@@ -41,8 +41,7 @@ def logloss(p, y):
 def get_x(csv_row, D):
     x = [0]  # 0 is the index of the bias term
     for key, value in csv_row.items():
-        # index = int(str(mmh3.hash(value + key[1:])), 16) % D  # int in base 16
-        index = mmh3.hash(value + key[1:]) % D
+        index = hash(value + key[1:]) % D
         x.append(index)
     return x  # x contains indices of features that have a value of 1
 
@@ -113,11 +112,11 @@ for t, row in enumerate(DictReader(open(train))):
     w, n = update_w(w, n, x, p, y)
 
 # save probability column
-test_df['probability'] = 0
+# test_df['probability'] = 0
 for t, row in enumerate(DictReader(open(test))):
     x = get_x(row, D)
     p = get_p(x, w)
-    test_df.loc[t, 'probability'] = p
+    # test_df.loc[t, 'probability'] = p
 
 # Saving to file
 with open(str(datetime.now()).split(".")[0] + 'predictions.csv', 'w') as predictions:
@@ -128,7 +127,7 @@ with open(str(datetime.now()).split(".")[0] + 'predictions.csv', 'w') as predict
         p = get_p(x, w)
         _ = predictions.write('%s,%f\n' % (Id, p))
 
-# Mutual information ############################################
+Mutual information ############################################
 
 MI = mutual_info_classif(test_df.select_dtypes(include=['int64']),
                          test_df['clicked'].values)
