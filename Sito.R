@@ -1,6 +1,0 @@
-library('data.table')
-clicks = fread("./tables_small_clicks.csv")
-dim(clicks)
-colnames(clicks)
-head(clicks)
-View(clicks[0:10,])
