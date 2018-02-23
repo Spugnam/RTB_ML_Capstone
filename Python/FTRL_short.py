@@ -145,3 +145,26 @@ def predict(self, df):
       clicks_list.append(y)
 
     return prob_list, clicks_list
+
+
+str(1234)
+
+ll = list(str(1234))
+i = 1
+ll[:i+1]
+ll[:i+1] + [','] + ll[i+1:]
+''.join(ll[:i+1] + [','] + ll[i+1:])
+
+list(123)
+
+def commas(ll):
+    length = len(list(str(ll)))
+    ll = list(str(ll))
+    i = length
+    while i > 1:
+        if (i % 3 == 0) & (i < length):
+            ll = ll[:i] + [','] + ll[i:]
+        i = i-1
+    return(''.join(ll))
+
+commas(1234)
